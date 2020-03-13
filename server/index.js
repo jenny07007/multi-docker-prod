@@ -32,9 +32,6 @@ const redisClient = redis.createClient({
   retry_strategy: () => 1000
 });
 
-// if we have a client that's listening or publishing info on redis we have to make a duplicate connection
-// when a connection turned into another connection that's going to listen or subscribe ot publish info
-// it can't be used for other purposes
 const redisPublisher = redisClient.duplicate();
 
 // express route handlers
@@ -47,7 +44,6 @@ app.get("/values/all", async (req, res) => {
 });
 
 app.get("/values/current", async (req, res) => {
-  // redis for node doesnt have the promise support, so we need to use callback
   redisClient.hgetall("values", (err, values) => {
     res.send(values);
   });
